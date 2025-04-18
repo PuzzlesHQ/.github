@@ -21,8 +21,11 @@ jobs:
       ARTIFACT_ID: ${{ inputs.artifact-id }}
       VERSION: ${{ github.ref_name }}
     steps:
-      - name: Check out the repository
-        uses: actions/checkout@v2
+      - name: Check out PuzzlesHQ/.github
+        uses: actions/checkout@v3
+        with:
+          repository: PuzzlesHQ/.github
+          ref: main
 
       - name: Grant execute permission for gradlew
         run: chmod +x .github/scripts/move-version.sh
