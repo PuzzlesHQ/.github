@@ -2,8 +2,15 @@ name: Puzzles HQ workflow
 
 on:
   release:
-    types: [ published ]
+    types: [published, deleted]
+
 jobs:
-  callmaven-publishing:
+  publish-release:
+    if: github.event.action == 'published'
+    uses: PuzzlesHQ/.github/workflows/maven-publishing.yml@main
+    secrets: inherit
+
+  delete-release:
+    if: github.event.action == 'deleted'
     uses: PuzzlesHQ/.github/workflows/maven-publishing.yml@main
     secrets: inherit
