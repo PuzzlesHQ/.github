@@ -13,8 +13,8 @@ jobs:
     uses: PuzzlesHQ/.github/workflows/maven-publishing.yml@main
     secrets: inherit
     with:
-      group-id: com.puzzleshq
-      artifact-id: access-writer
+      group-id: ${{ vars.GROUP_ID }}
+      artifact-id: CHANGE ME NOW!!!!!!
 
   delete-release:
     if: github.event.action == 'deleted'    
