@@ -25,7 +25,7 @@ FILES=(
 )
 
 # === Optional checksums ===
-EXTS=("md5" "sha1")
+EXTS=("md5" "sha1" "sha256" "sha512")
 
 # Add checksum files to the array
 CHECKSUM_FILES=()
@@ -67,7 +67,8 @@ done
 
 # === Step 3: Upload files to archived repository ===
 echo "Uploading to $DEST_REPO"
-for file in *; do
+ls -l "$TMP_DIR"
+for file in $TMP_DIR; do
   echo "→ Uploading $file"
   curl -sSf -X PUT -u "$AUTH" \
     --data-binary @"$file" "$MAVEN_URL/api/repository/$DEST_REPO/$ARTIFACT_PATH/$file" || {
