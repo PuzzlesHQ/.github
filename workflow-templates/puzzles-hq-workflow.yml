@@ -1,0 +1,9 @@
+name: Puzzles HQ workflow
+
+on:
+  release:
+    types: [ published ]
+jobs:
+  callmaven-publishing:
+    uses: PuzzlesHQ/.github/workflows/maven-publishing.yml@main
+    secrets: inherit
