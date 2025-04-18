@@ -62,17 +62,17 @@ echo "Uploading to $DEST_REPO"
 for file in *; do
   echo "→ Uploading $file"
   curl -sSf -X PUT -u "$AUTH" \
-    --data-binary @"$file" "$MAVEN_URL/$DEST_REPO/$ARTIFACT_PATH/$file" || {
+    --data-binary @"$file" "$MAVEN_URL/api/repository/$DEST_REPO/$ARTIFACT_PATH/$file" || {
     echo "Failed to upload $file"
     echo "$MAVEN_URL/$DEST_REPO/$ARTIFACT_PATH/$file"
     exit 1
-  }
+  } 
 done
 
 # === Step 3: Delete original version ===
 echo "Deleting from $SOURCE_REPO"
 curl -sSf -X DELETE -u "$AUTH" \
-  "$MAVEN_URL/$SOURCE_REPO/$ARTIFACT_PATH"
+  "$MAVEN_URL/api/repository/$SOURCE_REPO/$ARTIFACT_PATH"
 
 # === Done ===
 echo "Successfully moved $ARTIFACT_ID:$VERSION from '$SOURCE_REPO' to '$DEST_REPO'"
