@@ -1,0 +1,12 @@
+name: Puzzles HQ workflow
+
+on: workflow_dispatch
+env:
+  # Setting an environment variable with the value of a configuration variable
+  env_var: ${{ vars.ENV_CONTEXT_VAR }}
+  MAVEN_REPO: "snapshots"
+
+jobs:
+  publish-release:  
+    uses: PuzzlesHQ/.github/workflows/maven-publishing.yml@main
+    secrets: inherit
