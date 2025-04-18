@@ -1,22 +1,37 @@
-name: Publish project to local Maven repository
+name: Publish project to local or test Maven repository
+
 on:
   workflow_call:
     secrets: inherit
+
 jobs:
   publish:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+
       - name: Set up JDK
         uses: actions/setup-java@v1
         with:
-          java-version: 18
+          java-version: 17
+
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
-      - name: Publish to local with Gradle
-        run: ./gradlew build publishToMavenLocal
+
+      - name: Build project
+        run: ./gradlew build
+
+      - name: Publish to test custom Maven repo
+        if: ${{ secrets.MAVEN_NAME != null && secrets.MAVEN_SECRET != null }}
+        run: ./gradlew publish
         env:
-          MAVEN_NAME: ${{ secrets.MAVEN_NAME }} # token name
+          MAVEN_NAME: ${{ secrets.MAVEN_NAME }} # token secret (password)
           MAVEN_SECRET: ${{ secrets.MAVEN_SECRET }} # token secret (password)
+          isTest: true
+
+      - name: Publish to Maven local
+        if: ${{ secrets.MAVEN_CENTRAL_USERNAME != null && secrets.MAVEN_CENTRAL_PASSWORD != null }}
+        run: ./gradlew publishToMavenLocal
+        env:
           ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.MAVEN_CENTRAL_USERNAME }} # maven central username
           ORG_GRADLE_PROJECT_mavenCentralPassword: ${{ secrets.MAVEN_CENTRAL_PASSWORD }} #  maven central password
