@@ -1,7 +1,4 @@
 name: Publish project to Maven repository
-# Publish manually
-on: workflow_dispatch
-
 on:
   release:
     types: [ published ]
