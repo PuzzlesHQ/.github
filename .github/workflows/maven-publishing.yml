@@ -2,6 +2,13 @@ name: Publish project to Maven repository
 
 on:
   workflow_call:
+    inputs:
+        group-id:
+          required: false
+          type: string
+        artifact-id:
+          required: false
+          type: string
 
 jobs:
   publish:
