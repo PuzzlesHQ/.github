@@ -1,0 +1,7 @@
+{
+    "name": "Publish project to Maven repository",
+    "description": "Publish project to Maven repository.",
+    "categories": [
+        "Java"
+    ]
+}
