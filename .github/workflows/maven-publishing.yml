@@ -19,9 +19,11 @@ jobs:
       # Check if MAVEN_URL is set; if not, fail the job
       - name: Check if MAVEN_URL is set
         run: |
-          if [ -z "${{ env.MAVEN_URL }}" ]; then
+          if [ -z "${MAVEN_URL}" ]; then
             echo "Error: MAVEN_URL is not set!"
-            exit 1           
+            exit 1
+          fi
+          
 
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
