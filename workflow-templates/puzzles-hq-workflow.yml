@@ -10,7 +10,7 @@ env:
 jobs:
   publish-release: 
     if: github.event.action == 'published'  
-    uses: PuzzlesHQ/.github/workflows/maven-publishing.yml@main
+    uses: PuzzlesHQ/.github/.github/workflows/maven-publishing.yml@main
     secrets: inherit
     with:
       group-id: ${{ vars.GROUP_ID }}
@@ -18,7 +18,7 @@ jobs:
 
   delete-release:
     if: github.event.action == 'deleted'    
-    uses: PuzzlesHQ/.github/workflows/maven-deleting.yml@main
+    uses: PuzzlesHQ/.github/.github/workflows/maven-deleting.yml@main
     secrets: inherit
     with:
       group-id: ${{ vars.GROUP_ID }}
