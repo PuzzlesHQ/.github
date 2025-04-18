@@ -8,9 +8,11 @@ jobs:
   publish-release:
     if: github.event.action == 'published'
     uses: PuzzlesHQ/.github/workflows/maven-publishing.yml@main
+    #uses: PuzzlesHQ/.github/workflows/maven-publishing-test.yml@main
     secrets: inherit
 
   delete-release:
     if: github.event.action == 'deleted'
     uses: PuzzlesHQ/.github/workflows/maven-publishing.yml@main
+    #uses: PuzzlesHQ/.github/workflows/maven-publishing-test.yml@main
     secrets: inherit
