@@ -1,4 +1,4 @@
-name: deleting project on a Maven repository
+name: Deleting version on a Maven Repository
 
 on:
   workflow_call:
@@ -6,3 +6,16 @@ on:
 jobs:
   deleting:
     runs-on: ubuntu-latest
+    env:
+      MAVEN_URL: ${{ vars.MAVEN_URL }}
+      MAVEN_NAME: ${{ secrets.MAVEN_NAME }}
+      MAVEN_SECRET: ${{ secrets.MAVEN_SECRET }}
+      GROUP_ID: ${{ env.GROUP_ID }}
+      ARTIFACT_ID: ${{ env.ARTIFACT_ID }}
+      VERSION: ${{ github.ref_name }}
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v2
+
+      - name: Move version from releases to archived
+        run: .github/scripts/move-version.sh
