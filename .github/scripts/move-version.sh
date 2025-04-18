@@ -36,7 +36,7 @@ for file in "${FILES[@]}"; do
 done
 
 for file in "${FILES[@]}"; do
-  if curl --fail --silent --output "$file" -u "$MAVEN_NAME:$MAVEN_SECRET" "$URL/$file"; then
+  if curl --fail --silent --output "$file" -u "$AUTH" "$SOURCE_URL/$file"; then
     FOUND_FILES+=("$file")
     echo "Downloaded: $file"
   else
