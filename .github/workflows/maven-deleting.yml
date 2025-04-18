@@ -2,6 +2,13 @@ name: Deleting version on a Maven Repository
 
 on:
   workflow_call:
+    inputs:
+        group-id:
+          required: true
+          type: string
+        artifact-id:
+          required: true
+          type: string
 
 jobs:
   deleting:
@@ -10,8 +17,8 @@ jobs:
       MAVEN_URL: ${{ vars.MAVEN_URL }}
       MAVEN_NAME: ${{ secrets.MAVEN_NAME }}
       MAVEN_SECRET: ${{ secrets.MAVEN_SECRET }}
-      GROUP_ID: ${{ env.GROUP_ID }}
-      ARTIFACT_ID: ${{ env.ARTIFACT_ID }}
+      GROUP_ID: ${{ inputs.group-id }}
+      ARTIFACT_ID: ${{ inputs.artifact-id }}
       VERSION: ${{ github.ref_name }}
     steps:
       - name: Check out the repository
