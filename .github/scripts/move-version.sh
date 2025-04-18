@@ -24,6 +24,7 @@ FILES=(
   "$ARTIFACT_ID-$VERSION-sources.jar"
 )
 
+FOUND_FILES=()
 
 # === Optional checksums ===
 EXTS=("md5" "sha1")
@@ -34,13 +35,27 @@ for file in "${FILES[@]}"; do
   done
 done
 
+for file in "${FILES[@]}"; do
+  if curl --fail --silent --output "$file" -u "$MAVEN_NAME:$MAVEN_SECRET" "$URL/$file"; then
+    FOUND_FILES+=("$file")
+    echo "Downloaded: $file"
+  else
+    echo "Skipped (not found): $file"
+  fi
+done
+
+if [ ${#FOUND_FILES[@]} -eq 0 ]; then
+  echo "No files were downloaded — aborting."
+  exit 1
+fi
+
 # === Create working directory ===
 TMP_DIR=$(mktemp -d)
 cd "$TMP_DIR"
 
 # === Step 1: Download ===
 echo "Downloading files from $SOURCE_URL"
-for file in "${FILES[@]}"; do
+for file in "${#FOUND_FILES[@]}"; do
   echo "→ $file"
   curl -sSf -u "$AUTH" -O "$SOURCE_URL/$file" || echo "Skipped: $file"
 done
