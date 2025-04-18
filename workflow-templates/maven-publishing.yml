@@ -1,7 +1,7 @@
 name: Publish project to Maven repository
 on:
-  release:
-    types: [ published ]
+  workflow_call:
+    secrets: inherit
 jobs:
   publish:
     runs-on: ubuntu-latest
