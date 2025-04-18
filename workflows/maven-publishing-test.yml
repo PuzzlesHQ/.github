@@ -35,3 +35,9 @@ jobs:
         env:
           ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.MAVEN_CENTRAL_USERNAME }} # maven central username
           ORG_GRADLE_PROJECT_mavenCentralPassword: ${{ secrets.MAVEN_CENTRAL_PASSWORD }} #  maven central password
+
+      - name: List all files in local Maven repo under dev.puzzleshq
+        run: |
+          echo "All files under ~/.m2/repository/dev/puzzleshq:"
+          find ~/.m2/repository/dev/puzzleshq -type f || echo "No files found."
+
