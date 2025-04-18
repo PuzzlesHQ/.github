@@ -5,14 +5,22 @@ on:
     types: [published, deleted]
 
 jobs:
-  publish-release:
+  publish-release: 
     if: github.event.action == 'published'
+    runs-on: ubuntu-latest
+    env:
+      GITHUB_REF: ${{ github.ref }}
+    
     uses: PuzzlesHQ/.github/workflows/maven-publishing.yml@main
     #uses: PuzzlesHQ/.github/workflows/maven-publishing-test.yml@main
     secrets: inherit
 
   delete-release:
     if: github.event.action == 'deleted'
+    runs-on: ubuntu-latest
+    env:
+      GITHUB_REF: ${{ github.ref }}
+    
     uses: PuzzlesHQ/.github/workflows/maven-publishing.yml@main
     #uses: PuzzlesHQ/.github/workflows/maven-publishing-test.yml@main
     secrets: inherit
