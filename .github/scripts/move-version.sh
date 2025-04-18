@@ -13,7 +13,7 @@ AUTH="${MAVEN_NAME:?MAVEN_NAME not set}:${MAVEN_SECRET:?MAVEN_SECRET not set}"
 # === Path conversions ===
 GROUP_PATH="${GROUP_ID//.//}" # convert dots to slashes
 ARTIFACT_PATH="$GROUP_PATH/$ARTIFACT_ID/$VERSION"
-SOURCE_URL="$MAVEN_URL/repository/$SOURCE_REPO/$ARTIFACT_PATH"
+SOURCE_URL="$MAVEN_URL/$SOURCE_REPO/$ARTIFACT_PATH"
 
 # === Known Maven files ===
 FILES=(
