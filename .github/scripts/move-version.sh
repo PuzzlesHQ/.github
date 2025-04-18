@@ -24,18 +24,23 @@ FILES=(
   "$ARTIFACT_ID-$VERSION-sources.jar"
 )
 
-FOUND_FILES=()
-
 # === Optional checksums ===
 EXTS=("md5" "sha1")
 
+# Add checksum files to the array
+CHECKSUM_FILES=()
 for file in "${FILES[@]}"; do
+  CHECKSUM_FILES+=("$file")
   for ext in "${EXTS[@]}"; do
-    FILES+=("$file.$ext")
+    CHECKSUM_FILES+=("$file.$ext")
   done
 done
 
-for file in "${FILES[@]}"; do
+FOUND_FILES=()
+
+# === Step 1: Download files ===
+echo "Downloading files from $SOURCE_URL"
+for file in "${CHECKSUM_FILES[@]}"; do
   if curl --fail --silent --output "$file" -u "$AUTH" "$SOURCE_URL/$file"; then
     FOUND_FILES+=("$file")
     echo "Downloaded: $file"
@@ -44,38 +49,44 @@ for file in "${FILES[@]}"; do
   fi
 done
 
+# Check if any files were found and downloaded
 if [ ${#FOUND_FILES[@]} -eq 0 ]; then
   echo "No files were downloaded — aborting."
   exit 1
 fi
 
-# === Create working directory ===
+# === Step 2: Create temporary working directory ===
 TMP_DIR=$(mktemp -d)
-cd "$TMP_DIR"
+cd "$TMP_DIR" || exit 1  # Ensure we can enter the directory
 
-# === Step 1: Download ===
-echo "Downloading files from $SOURCE_URL"
-for file in "${#FOUND_FILES[@]}"; do
-  echo "→ $file"
+# Downloading all files again into the temporary directory
+for file in "${FOUND_FILES[@]}"; do
+  echo "→ Downloading $file"
   curl -sSf -u "$AUTH" -O "$SOURCE_URL/$file" || echo "Skipped: $file"
 done
 
-# === Step 2: Upload to archived ===
+# === Step 3: Upload files to archived repository ===
 echo "Uploading to $DEST_REPO"
 for file in *; do
-  echo "→ $file"
+  echo "→ Uploading $file"
   curl -sSf -X PUT -u "$AUTH" \
-    --data-binary @"$file" "$MAVEN_URL/api/repository/$DEST_REPO/$ARTIFACT_PATH/$file"
+    --data-binary @"$file" "$MAVEN_URL/api/repository/$DEST_REPO/$ARTIFACT_PATH/$file" || {
+    echo "Failed to upload $file"
+    exit 1
+  }
 done
 
-# === Step 3: Delete original version ===
+# === Step 4: Delete original version ===
 echo "Deleting from $SOURCE_REPO"
 curl -sSf -X DELETE -u "$AUTH" \
-  "$MAVEN_URL/api/repository/$SOURCE_REPO/$ARTIFACT_PATH"
+  "$MAVEN_URL/api/repository/$SOURCE_REPO/$ARTIFACT_PATH" || {
+    echo "Failed to delete from $SOURCE_REPO"
+    exit 1
+}
 
 # === Done ===
 echo "Successfully moved $ARTIFACT_ID:$VERSION from '$SOURCE_REPO' to '$DEST_REPO'"
 
 # === Cleanup ===
 cd - > /dev/null
-rm -rf "$TMP_DIR"
+rm -rf "$TMP_DIR" || exit 1
