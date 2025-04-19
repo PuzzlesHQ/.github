@@ -43,9 +43,9 @@ jobs:
       - name: Build project
         run: ./gradlew build
 
-      - name: Publish to custom Maven repo
+      - name: Publish to PuzzleHQsMaven
         if: ${{ env.MAVEN_NAME && env.MAVEN_SECRET }}
-        run: ./gradlew publish
+        run: ./gradlew publishMavenPublicationToPuzzleHQsMavenRepository
         env:
           MAVEN_NAME: ${{ env.MAVEN_NAME }} # token secret (password)
           MAVEN_SECRET: ${{ env.MAVEN_SECRET }} # token secret (password)
@@ -54,7 +54,7 @@ jobs:
 
       - name: Publish to Maven Central
         if: ${{ env.MAVEN_CENTRAL_USERNAME && env.MAVEN_CENTRAL_PASSWORD }}
-        run: ./gradlew publishToMavenCentral
+        run: ./gradlew publishMavenPublicationToMavenCentral
         env:
           ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ env.MAVEN_CENTRAL_USERNAME }} # maven central username
           ORG_GRADLE_PROJECT_mavenCentralPassword: ${{ env.MAVEN_CENTRAL_PASSWORD }} #  maven central password
