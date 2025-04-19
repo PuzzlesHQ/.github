@@ -64,8 +64,6 @@ for file in *; do
   curl -sSf -X PUT -u "$AUTH" \
     --data-binary @"$file" "$MAVEN_URL/$DEST_REPO/$ARTIFACT_PATH/$file" || {
     echo "Failed to upload $file"
-    echo "$MAVEN_URL/$DEST_REPO/$ARTIFACT_PATH/$file"
-    echo "$MAVEN_URL/$DEST_REPO/$ARTIFACT_PATH"
     exit 1
   } 
 done
