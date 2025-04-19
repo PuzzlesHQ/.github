@@ -23,14 +23,8 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      # Check if MAVEN_URL is set; if not, fail the job
-      - name: Check if MAVEN_URL is set
-        run: |
-          if [ -z "${MAVEN_URL}" ]; then
-            echo "Error: MAVEN_URL is not set!"
-            exit 1
-          fi
-          
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@417ae3ccd767c252f5661f1ace9f835f9654f2b5 
 
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
@@ -44,7 +38,7 @@ jobs:
         run: ./gradlew build
 
       - name: Publish to PuzzleHQsMaven
-        if: ${{ env.MAVEN_NAME && env.MAVEN_SECRET }}
+        if: ${{ env.MAVEN_NAME && env.MAVEN_SECRET && env.MAVEN_URL }}
         run: ./gradlew publishMavenPublicationToPuzzleHQsMavenRepository
         env:
           MAVEN_NAME: ${{ env.MAVEN_NAME }} # token secret (password)
