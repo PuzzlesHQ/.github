@@ -38,17 +38,14 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
         with:
-          cache-read-only: false
-
-      - name: Grant execute permission for gradlew
-        run: chmod +x gradlew
+          gradle-version: '8.14'
 
       - name: Build project
-        run: ./gradlew build
+        run: gradle build
 
       - name: Publish to PuzzleHQsMaven
         if: ${{ env.MAVEN_NAME && env.MAVEN_SECRET && env.MAVEN_URL}}
-        run: ./gradlew publishMavenPublicationToPuzzleHQsMavenRepository
+        run: gradle publishMavenPublicationToPuzzleHQsMavenRepository
         env:
           MAVEN_NAME: ${{ env.MAVEN_NAME }} # token secret (password)
           MAVEN_SECRET: ${{ env.MAVEN_SECRET }} # token secret (password)
@@ -60,7 +57,7 @@ jobs:
 
       - name: Publish to Maven Central
         if: ${{ env.MAVEN_CENTRAL_USERNAME && env.MAVEN_CENTRAL_PASSWORD }}
-        run: ./gradlew publishMavenPublicationToMavenCentral
+        run: gradle publishMavenPublicationToMavenCentral
         env:
           ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ env.MAVEN_CENTRAL_USERNAME }} # maven central username
           ORG_GRADLE_PROJECT_mavenCentralPassword: ${{ env.MAVEN_CENTRAL_PASSWORD }} #  maven central password
