@@ -47,7 +47,6 @@ jobs:
         uses: PuzzlesHQ/.github/workflows/maven-central-publishing.yml@main
         secrets: inherit
       
-
       - name: Run task for Maven Puzzle
         if: steps.check_tag.outputs.MAVEN_PUZZLE == 'true'
         uses: PuzzlesHQ/.github/workflows/maven-puzzle-publishing.yml@main
