@@ -1,0 +1,55 @@
+name: Publish project to Maven repository
+
+on:
+  workflow_call:
+    inputs:
+        group-id:
+          required: false
+          type: string
+        artifact-id:
+          required: false
+          type: string
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    env:
+      MAVEN_NAME: ${{ secrets.MAVEN_NAME }}
+      MAVEN_SECRET: ${{ secrets.MAVEN_SECRET }}
+      MAVEN_URL: ${{ vars.MAVEN_URL }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Import GPG key
+        uses: crazy-max/ghaction-import-gpg@v6
+        with:
+          gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
+          passphrase: ${{ secrets.GPG_PASSPHRASE }}
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: 24
+      
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.14'
+
+      - name: Build project
+        run: gradle build
+
+      - name: Publish to PuzzleHQsMaven
+        if: ${{ env.MAVEN_NAME && env.MAVEN_SECRET && env.MAVEN_URL}}
+        run: gradle publishMavenPublicationToPuzzleHQsMavenRepository
+        env:
+          MAVEN_NAME: ${{ env.MAVEN_NAME }} # token secret (password)
+          MAVEN_SECRET: ${{ env.MAVEN_SECRET }} # token secret (password)
+          MAVEN_URL: ${{ env.MAVEN_URL }}
+          ORG_GRADLE_PROJECT_signingInMemoryKey: ${{ secrets.PLUGIN_SECRET_KEY }}
+          ORG_GRADLE_PROJECT_signingInMemoryKeyId: ${{ secrets.GPG_SECRET_KEY_ID }}
+          ORG_GRADLE_PROJECT_signingInMemoryKeyPassword: ${{ secrets.GPG_PASSPHRASE }}
+          GITHUB_REF: ${{ github.ref }}
+
