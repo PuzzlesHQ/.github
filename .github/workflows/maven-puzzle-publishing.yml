@@ -2,13 +2,22 @@ name: Publish project to Puzzle Maven
 
 on:
   workflow_call:
+    secrets:
+      MAVEN_USERNAME:
+        required: true
+      MAVEN_PASSWORD:
+        required: true
+      PLUGIN_SECRET_KEY:
+        required: true
+      GPG_SECRET_KEY_ID:
+        required: true
+      GPG_PASSPHRASE:
+        required: true
 
 jobs:
   publish:
     runs-on: ubuntu-latest
     env:
-      MAVEN_NAME: ${{ secrets.MAVEN_NAME }}
-      MAVEN_SECRET: ${{ secrets.MAVEN_SECRET }}
       MAVEN_URL: ${{ vars.MAVEN_URL }}
 
     steps:
@@ -38,8 +47,8 @@ jobs:
         if: ${{ env.MAVEN_NAME && env.MAVEN_SECRET && env.MAVEN_URL}}
         run: gradle publishMavenPublicationToPuzzleHQsMavenRepository
         env:
-          MAVEN_NAME: ${{ env.MAVEN_NAME }} # token secret (password)
-          MAVEN_SECRET: ${{ env.MAVEN_SECRET }} # token secret (password)
+          MAVEN_NAME: ${{ secrets.MAVEN_NAME }} # token secret (password)
+          MAVEN_SECRET: ${{ secrets.MAVEN_SECRET }} # token secret (password)
           MAVEN_URL: ${{ env.MAVEN_URL }}
           ORG_GRADLE_PROJECT_signingInMemoryKey: ${{ secrets.PLUGIN_SECRET_KEY }}
           ORG_GRADLE_PROJECT_signingInMemoryKeyId: ${{ secrets.GPG_SECRET_KEY_ID }}
