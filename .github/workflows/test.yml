@@ -28,6 +28,16 @@ jobs:
             echo "MAVEN_PUZZLE=false" >> $GITHUB_OUTPUT
           fi
 
+          if [[ "${TAG_NAME}" == *"+mc"* ]]; then
+            echo "MAVEN_PUZZLE=true" >> $GITHUB_OUTPUT
+            echo "MAVEN_CENTRAL=true" >> $GITHUB_OUTPUT
+          fi
+
+          if [[ "${TAG_NAME}" == *"+cm"* ]]; then
+            echo "MAVEN_PUZZLE=true" >> $GITHUB_OUTPUT
+            echo "MAVEN_CENTRAL=true" >> $GITHUB_OUTPUT
+          fi
+
       - name: Run task for Maven Central
         if: steps.check_tag.outputs.MAVEN_CENTRAL == 'true'
         run: echo "Maven-Central-only releases"
