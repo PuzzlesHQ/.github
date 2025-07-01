@@ -2,7 +2,7 @@ name: Puzzles HQ workflow
 
 on:
   release:
-    types: [published, deleted]
+    types: [published]
 env:
   # Setting an environment variable with the value of a configuration variable
   env_var: ${{ vars.ENV_CONTEXT_VAR }}
@@ -16,26 +16,4 @@ jobs:
       group-id: ${{ vars.GROUP_ID }}
       artifact-id: ${{ vars.ARTIFACT_ID }}
 
-  delete-release:
-    if: ${{ github.event.action == 'deleted' && vars.TEST != 'true' }} 
-    uses: PuzzlesHQ/.github/.github/workflows/maven-deleting.yml@main
-    secrets: inherit
-    with:
-      group-id: ${{ vars.GROUP_ID }}
-      artifact-id: ${{ vars.ARTIFACT_ID }}
 
-  test-publish-release: 
-    if: ${{ github.event.action == 'published' && vars.TEST == 'true' }} 
-    uses: PuzzlesHQ/.github/.github/workflows/maven-publishing-test.yml@main
-    secrets: inherit
-    with:
-      group-id: ${{ vars.GROUP_ID }}
-      artifact-id: ${{ vars.ARTIFACT_ID }}
-
-  test-delete-release:
-    if: ${{ github.event.action == 'deleted' && vars.TEST == 'true' }} 
-    uses: PuzzlesHQ/.github/.github/workflows/maven-deleting-test.yml@main
-    secrets: inherit
-    with:
-      group-id: ${{ vars.GROUP_ID }}
-      artifact-id: ${{ vars.ARTIFACT_ID }}
