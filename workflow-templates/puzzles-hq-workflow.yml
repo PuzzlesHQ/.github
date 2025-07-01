@@ -3,17 +3,35 @@ name: Puzzles HQ workflow
 on:
   release:
     types: [published]
-env:
-  # Setting an environment variable with the value of a configuration variable
-  env_var: ${{ vars.ENV_CONTEXT_VAR }}
 
 jobs:
-  publish-release: 
-    if: ${{ github.event.action == 'published' && vars.TEST != 'true' }} 
-    uses: PuzzlesHQ/.github/.github/workflows/maven-publishing.yml@main
-    secrets: inherit
-    with:
-      group-id: ${{ vars.GROUP_ID }}
-      artifact-id: ${{ vars.ARTIFACT_ID }}
+  publish-release:
+    runs-on: ubuntu-latest
+    env:
+      TAG_NAME: ${{ github.event.release.tag_name }}
 
+    steps:
+      - name: Check tag suffixes
+        id: check_tag
+        run: |
+          echo "TAG=${TAG_NAME}" >> $GITHUB_OUTPUT
 
+          if [[ "${TAG_NAME}" == *"+c"* ]]; then
+            echo "MAVEN_CENTRAL=true" >> $GITHUB_OUTPUT
+          else
+            echo "MAVEN_CENTRAL=false" >> $GITHUB_OUTPUT
+          fi
+
+          if [[ "${TAG_NAME}" == *"+m"* ]]; then
+            echo "MAVEN_PUZZLE=true" >> $GITHUB_OUTPUT
+          else
+            echo "MAVEN_PUZZLE=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Run task for Maven Central
+        if: steps.check_tag.outputs.MAVEN_CENTRAL == 'true'
+        run: echo "Maven-Central-only releases"
+
+      - name: Run task for Maven Puzzle
+        if: steps.check_tag.outputs.MAVEN_PUZZLE == 'true'
+        run: echo "Maven-Puzzle-only releases"
