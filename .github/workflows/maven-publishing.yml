@@ -2,6 +2,10 @@ name: Publish project to Maven repository
 
 on:
   workflow_call:
+    inputs:
+      TAG_NAME:
+        required: true
+        type: string
     secrets:
       MAVEN_CENTRAL_USERNAME:
         required: true
@@ -19,35 +23,37 @@ on:
         required: true
 
 jobs:
-  publish-release:
+  check-tag:
     runs-on: ubuntu-latest
-    env:
-      TAG_NAME: ${{ github.event.release.tag_name }}
-
+    outputs:
+      MAVEN_CENTRAL: ${{ steps.check_tag.outputs.MAVEN_CENTRAL }}
+      MAVEN_PUZZLE: ${{ steps.check_tag.outputs.MAVEN_PUZZLE }}
     steps:
       - name: Check tag suffixes
         id: check_tag
         run: |
-          echo "TAG=${TAG_NAME}" >> $GITHUB_OUTPUT
+          echo "TAG=${{ inputs.TAG_NAME }}" >> $GITHUB_OUTPUT
 
-          if [[ "${TAG_NAME}" == *"+c"* ]]; then
+          if [[ "${{ inputs.TAG_NAME }}" == *"+c"* ]]; then
             echo "MAVEN_CENTRAL=true" >> $GITHUB_OUTPUT
           else
             echo "MAVEN_CENTRAL=false" >> $GITHUB_OUTPUT
           fi
 
-          if [[ "${TAG_NAME}" == *"+m"* ]]; then
+          if [[ "${{ inputs.TAG_NAME }}" == *"+m"* ]]; then
             echo "MAVEN_PUZZLE=true" >> $GITHUB_OUTPUT
           else
             echo "MAVEN_PUZZLE=false" >> $GITHUB_OUTPUT
           fi
 
-      - name: Run task for Maven Central
-        if: steps.check_tag.outputs.MAVEN_CENTRAL == 'true'
-        uses: PuzzlesHQ/.github/workflows/maven-central-publishing.yml@main
-        secrets: inherit
-      
-      - name: Run task for Maven Puzzle
-        if: steps.check_tag.outputs.MAVEN_PUZZLE == 'true'
-        uses: PuzzlesHQ/.github/workflows/maven-puzzle-publishing.yml@main
-        secrets: inherit
+  maven-central-publish:
+    needs: check-tag
+    if: needs.check-tag.outputs.MAVEN_CENTRAL == 'true'
+    uses: PuzzlesHQ/.github/workflows/maven-central-publishing.yml@main
+    secrets: inherit
+
+  maven-puzzle-publish:
+    needs: check-tag
+    if: needs.check-tag.outputs.MAVEN_PUZZLE == 'true'
+    uses: PuzzlesHQ/.github/workflows/maven-puzzle-publishing.yml@main
+    secrets: inherit
