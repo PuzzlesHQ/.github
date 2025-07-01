@@ -6,7 +6,7 @@ on:
 
 jobs:
   publish-release:
-    uses: PuzzlesHQ/.github/.github/workflows/maven-publishing.yml@main
+    uses: PuzzlesHQ/.github/workflows/maven-publishing.yml@main
     secrets: inherit
     with:
       TAG_NAME: ${{ github.event.release.tag_name }}
