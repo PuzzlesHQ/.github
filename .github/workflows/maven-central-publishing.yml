@@ -7,10 +7,6 @@ on:
         required: true
       MAVEN_CENTRAL_PASSWORD:
         required: true
-      MAVEN_USERNAME:
-        required: true
-      MAVEN_PASSWORD:
-        required: true
       PLUGIN_SECRET_KEY:
         required: true
       GPG_SECRET_KEY_ID:
